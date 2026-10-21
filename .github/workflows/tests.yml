@@ -14,4 +14,4 @@ jobs:
           cache: pip
       - run: python -m pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cpu
       - run: python -m pip install -r requirements.txt
-      - run: python -m unittest test_skin_generator test_skin_generator_large test_skin_edit test_next_tag test_distribution -v
+      - run: python -m unittest test_skin_generator test_skin_generator_large test_skin_edit test_next_tag test_distribution test_catalog_batch -v

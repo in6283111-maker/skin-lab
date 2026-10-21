@@ -19,4 +19,19 @@ async function openSkin(row){const version=++openVersion;$('detail-model').textC
 function resizeDetail(){if(detailViewer&&$('viewer-dialog').open){const box=$('viewer-stage').getBoundingClientRect();if(box.width&&box.height)detailViewer.setSize(box.width,box.height);}}
 $('close-viewer').onclick=()=>$('viewer-dialog').close();$('viewer-dialog').addEventListener('close',()=>{openVersion++;if(detailViewer)detailViewer.renderPaused=true;});$('reset-view').onclick=()=>{if(detailViewer)reset(detailViewer);};new ResizeObserver(resizeDetail).observe($('viewer-stage'));
 $('search').oninput=()=>{page=0;if(data)render();};$('model').onchange=$('sort').onchange=()=>{page=0;render();};$('clear').onclick=()=>{selected.clear();$('search').value='';$('model').value='all';page=0;render();};$('previous').onclick=()=>{page--;render();};$('next').onclick=()=>{page++;render();};$('language').onchange=()=>{lang=$('language').value;translate();};
-translate();fetch('data.json').then(response=>{if(!response.ok)throw new Error(response.status);return response.json();}).then(payload=>{data=payload;for(const [id,label]of Object.entries(data.models)){if(data.skins.some(row=>row.generator===id)){const option=node('option','',`${label} · ${id}`);option.value=id;$('model').append(option);}}render();}).catch(error=>{console.error(error);$('error').hidden=false;$('error').textContent=t('failed');});
+function applyCatalog(payload){
+ if(payload.version!==1||!Array.isArray(payload.skins)||payload.skins.some(row=>row.generator!=='generator_large_new_dataset'))throw new Error('Invalid catalog');
+ data=payload;const current=$('model').value;$('model').replaceChildren(node('option','',t('all')));$('model').options[0].value='all';
+ for(const [id,label]of Object.entries(data.models)){if(data.skins.some(row=>row.generator===id)){const option=node('option','',`${label} · ${id}`);option.value=id;$('model').append(option);}}
+ if([...$('model').options].some(option=>option.value===current))$('model').value=current;render();
+}
+async function loadCatalog(){
+ try{const response=await fetch('data.json');if(!response.ok)throw new Error(response.status);applyCatalog(await response.json());}
+ catch(error){console.error(error);$('error').hidden=false;$('error').textContent=t('failed');}
+ try{const configResponse=await fetch('catalog_source.json');if(!configResponse.ok)return;const config=await configResponse.json();if(!config.url)return;
+ const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),20000);
+ try{const url=new URL(config.url);url.searchParams.set('v',String(Math.floor(Date.now()/60000)));const response=await fetch(url,{signal:controller.signal});if(!response.ok)throw new Error(response.status);const payload=await response.json();if(!data||payload.skins.length>=data.skins.length){applyCatalog(payload);$('error').hidden=true;}}
+ finally{clearTimeout(timeout);}}
+ catch(error){console.warn('Using bundled catalog:',error.message);}
+}
+translate();void loadCatalog();

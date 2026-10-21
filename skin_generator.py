@@ -330,10 +330,16 @@ def loss_batch(model, images, tags, alpha, weight, drop_probability=0.1, generat
 
 @torch.no_grad()
 def sample(model, tags, diffusion_steps, sampling_steps=50, guidance=2.5, seed=42,
-           initial_image=None, strength=.5):
+           initial_image=None, strength=.5, seeds=None):
     device = next(model.parameters()).device
-    rng = torch.Generator(device=device).manual_seed(seed)
-    x = torch.randn((len(tags), 4, 64, 64), generator=rng, device=device)
+    if seeds is None:
+        rng = torch.Generator(device=device).manual_seed(seed)
+        x = torch.randn((len(tags), 4, 64, 64), generator=rng, device=device)
+    else:
+        if len(seeds) != len(tags):
+            raise ValueError('Provide one seed for every skin in the batch')
+        x = torch.cat([torch.randn((1, 4, 64, 64), device=device,
+                       generator=torch.Generator(device=device).manual_seed(value)) for value in seeds])
     alpha = schedule(diffusion_steps, device)
     sequence = torch.linspace(diffusion_steps - 1, 0, sampling_steps, device=device).long().unique_consecutive()
     if initial_image is not None:

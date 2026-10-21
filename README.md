@@ -73,6 +73,24 @@ Weights include inference parameters and EMA, without optimizer/RNG state or loc
 
 This initializes from pretrained weights; it does not resume the original optimizer. See `python skin_generator.py train --help`.
 
+### Batch generation for the catalog
+
+Generate 1,000 random skins using the latest model, with one gender, hair color and eye color per prompt. Prompts come from a conservative theme list; every skin has a separate random seed. The full plan is saved before generation. CUDA is required for this command.
+
+```powershell
+.\start_catalog_batch.ps1 -Count 1000 -Steps 100 -BatchSize 4
+Get-Content .\output\catalog-batch\stdout.log -Tail 10 -Wait
+Get-Content .\output\catalog-batch\status.json
+```
+
+Run the same command to resume the saved plan after a crash. Do not change count or steps when resuming. Old PNGs and metadata are reused. To start a separate batch, choose another `-RunDir`.
+
+For automatic publication to your own Hugging Face model repository, authenticate with `hf auth login`, then add `-PublishRepo YOUR_ACCOUNT/YOUR_REPO`. The worker uploads `gallery/data.json` every 100 completed skins and at the end. Set the public URL in `docs/catalog_source.json` to your repository. The GitHub Pages catalog loads this live data, with its bundled JSON as an offline fallback. Refresh the page to see a newly published batch. No token is stored in the code or browser. An interrupted upload can be repeated without generation:
+
+```powershell
+.\.venv\Scripts\python.exe tools/generate_catalog.py --publish-only --run output/catalog-publish --publish-repo YOUR_ACCOUNT/YOUR_REPO
+```
+
 ### Public catalog and development
 
 [Browse the 3D catalog](https://in6283111-maker.github.io/skin-lab/): only current-generator examples, with tags, exact model ID, seeds and downloads. Generation runs in the local app.
@@ -166,6 +184,24 @@ Linux/macOS: `bash start.sh --backend cpu`.
 ```
 
 Это новый запуск из обученных весов, без продолжения старого состояния оптимизатора. Параметры: `python skin_generator.py train --help`.
+
+### Пакетная генерация для каталога
+
+Создать 1000 скинов на новой модели: случайные сиды, разные наборы тегов, один пол, цвет волос и глаз на набор. Теги выбираются из проверенных тематических групп. План сохраняется до генерации. Команда требует CUDA.
+
+```powershell
+.\start_catalog_batch.ps1 -Count 1000 -Steps 100 -BatchSize 4
+Get-Content .\output\catalog-batch\stdout.log -Tail 10 -Wait
+Get-Content .\output\catalog-batch\status.json
+```
+
+После сбоя повторите ту же команду с теми же count и steps: готовые PNG и JSON пропускаются. Для новой партии укажите другую папку через `-RunDir`.
+
+Для автопубликации в свой репозиторий Hugging Face войдите через `hf auth login` и добавьте `-PublishRepo YOUR_ACCOUNT/YOUR_REPO`. Скрипт загружает `gallery/data.json` каждые 100 скинов и в конце. Укажите публичный URL своего файла в `docs/catalog_source.json`. Сайт GitHub Pages читает обновления оттуда, при недоступности использует встроенный JSON. Обновите страницу, чтобы увидеть новую партию. Токен не попадает в код и браузер. Повторить только публикацию:
+
+```powershell
+.\.venv\Scripts\python.exe tools/generate_catalog.py --publish-only --run output/catalog-publish --publish-repo YOUR_ACCOUNT/YOUR_REPO
+```
 
 ### Каталог и разработка
 

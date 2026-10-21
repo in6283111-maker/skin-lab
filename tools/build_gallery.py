@@ -4,12 +4,15 @@ import base64
 import io
 import json
 import shutil
+import sys
 from collections import Counter
 from pathlib import Path
 
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from tools.catalog_prompts import conflicts
 MODELS = {'generator_large_new_dataset': 'Generator Large · latest'}
 
 
@@ -37,6 +40,9 @@ def build(source, output):
             clean.save(buffer, format='PNG', optimize=True)
             tags = sorted({tag.strip().casefold() for tag in data.get('tags', [])
                            if isinstance(tag, str) and tag.strip()})
+            if conflicts(tags):
+                skipped.append({'file': path.name, 'error': 'Incompatible tags: ' + '; '.join(conflicts(tags))})
+                continue
             rows.append({'id': path.stem, 'filename': path.name, 'seed': str(data['seed']),
                          'tags': tags, 'generator': model, 'created_at': data.get('created_at', ''),
                          'layout': 'slim' if data.get('model') == 'slim' else 'default',
@@ -48,7 +54,9 @@ def build(source, output):
     counts = Counter(tag for row in rows for tag in row['tags'])
     payload = {'version': 1, 'models': MODELS, 'skins': rows,
                'popular_tags': [{'tag': tag, 'count': count} for tag, count in counts.most_common()]}
-    (output / 'data.json').write_text(json.dumps(payload, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+    temporary = output / 'data.json.tmp'
+    temporary.write_text(json.dumps(payload, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+    temporary.replace(output / 'data.json')
     vendor = output / 'vendor'
     vendor.mkdir(exist_ok=True)
     for name in ('skinview3d.bundle.min.js', 'LICENSE.skinview3d'):
