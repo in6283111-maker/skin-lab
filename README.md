@@ -59,6 +59,8 @@ bash start.sh --backend cpu
 
 ## Модели на Hugging Face
 
+[Скачать модели и скрипт запуска: Helledery/skin-lab-models](https://huggingface.co/Helledery/skin-lab-models)
+
 Репозиторий весов задаётся в `model_hub.json`. На Hugging Face размещены веса, скрипты запуска, описание и `models.json` с размерами и SHA-256. Датасеты, локальные пути, журналы и состояния оптимизатора не публикуются.
 
 | ID | Назначение |
