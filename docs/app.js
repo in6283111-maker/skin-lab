@@ -26,9 +26,9 @@ function applyCatalog(payload){
  if([...$('model').options].some(option=>option.value===current))$('model').value=current;render();
 }
 async function loadCatalog(){
- try{const response=await fetch('data.json');if(!response.ok)throw new Error(response.status);applyCatalog(await response.json());}
+ try{const response=await fetch('data.json',{cache:'no-cache'});if(!response.ok)throw new Error(response.status);applyCatalog(await response.json());}
  catch(error){console.error(error);$('error').hidden=false;$('error').textContent=t('failed');}
- try{const configResponse=await fetch('catalog_source.json');if(!configResponse.ok)return;const config=await configResponse.json();if(!config.url)return;
+ try{const configResponse=await fetch('catalog_source.json',{cache:'no-cache'});if(!configResponse.ok)return;const config=await configResponse.json();if(!config.url)return;
  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),20000);
  try{const url=new URL(config.url);url.searchParams.set('v',String(Math.floor(Date.now()/60000)));const response=await fetch(url,{signal:controller.signal});if(!response.ok)throw new Error(response.status);const payload=await response.json();if(!data||payload.skins.length>=data.skins.length){applyCatalog(payload);$('error').hidden=true;}}
  finally{clearTimeout(timeout);}}
