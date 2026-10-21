@@ -15,9 +15,9 @@ FILES = ['skin_generator.py', 'skin_generator_large.py', 'skin_generator_server.
 def build():
     DESTINATION.mkdir(parents=True, exist_ok=True)
     paths = [Path(name) for name in FILES if (ROOT / name).is_file()]
-    for directory in ('generator_site', 'catalog_site', '.github'):
+    for directory in ('generator_site', 'catalog_site', 'docs', '.github'):
         paths.extend(path.relative_to(ROOT) for path in (ROOT / directory).rglob('*') if path.is_file())
-    paths.extend(Path('tools') / name for name in ('export_models.py', 'build_public_release.py'))
+    paths.extend(Path('tools') / name for name in ('export_models.py', 'build_public_release.py', 'build_gallery.py'))
     for relative in paths:
         target = DESTINATION / relative
         target.parent.mkdir(parents=True, exist_ok=True)

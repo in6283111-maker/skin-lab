@@ -10,6 +10,19 @@ Local Minecraft skin generation from tags: four results, interactive 3D previews
 
 **Source code is hosted on GitHub; model weights are downloaded separately from Hugging Face.** No training dataset is needed to run the app. The web interface runs on your computer at `http://127.0.0.1:8001`.
 
+### Public skin catalog
+
+[Browse the 3D catalog](https://in6283111-maker.github.io/skin-lab/) — tags, exact generator model, seed, rotating 3D previews and PNG downloads. This static gallery does not generate new skins; use the local app for generation.
+
+Refresh the catalog from your own generated files and preview it:
+
+```powershell
+python tools/build_gallery.py --source generated_skins_web --output docs
+python -m http.server 8020 --directory docs
+```
+
+Open `http://localhost:8020`. Publish the `docs` folder through GitHub Pages. The exporter includes PNGs and public generation settings, excluding local checkpoint paths.
+
 ### Requirements
 
 - **64-bit Python 3.10–3.13**, preferably **3.12**: [download Python](https://www.python.org/downloads/). On Windows, enable **Add Python to PATH**.
@@ -381,3 +394,16 @@ New-Item -ItemType File -Force .\checkpoints\my-finetune\STOP
 ### Поддержка
 
 Поддержать разработку можно на [Patreon](https://www.patreon.com/cw/ender_venom1). Поддержка добровольная: скачивание и запуск Skin Lab не требуют подписки. Другие способы помочь — на [странице поддержки](SUPPORT.md).
+
+### Публичный каталог скинов
+
+[Открыть 3D-каталог](https://in6283111-maker.github.io/skin-lab/) — теги, точная модель генерации, сид, вращение в 3D и скачивание PNG. Новые скины создаются в локальном приложении.
+
+Обновить каталог и открыть локально:
+
+```powershell
+python tools/build_gallery.py --source generated_skins_web --output docs
+python -m http.server 8020 --directory docs
+```
+
+Адрес: `http://localhost:8020`. Для публикации в GitHub Pages выбери папку `docs`. Локальные пути checkpoint в каталог не попадают.
