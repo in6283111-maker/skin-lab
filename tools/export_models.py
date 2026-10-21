@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import shutil
 from pathlib import Path
 
 import torch
@@ -10,8 +11,17 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def export(root, output):
+    output = output.resolve()
+    if output == root.resolve() or output in root.resolve().parents:
+        raise ValueError('Export into a separate release directory, never the source workspace')
+    for obsolete in ('generator', 'generator_large'):
+        directory = (output / 'checkpoints' / obsolete).resolve()
+        if not directory.is_relative_to(output):
+            raise ValueError('Export directory escapes the release folder')
+        if directory.is_dir():
+            shutil.rmtree(directory)
     index = {'format_version': 1, 'models': {}}
-    for name in ('generator', 'generator_large', 'generator_large_new_dataset', 'skin_tagger', 'next_tag'):
+    for name in ('generator_large_new_dataset', 'skin_tagger', 'next_tag'):
         source = root / 'checkpoints' / (f'{name}/last.pt' if name.startswith('generator') else
                                          'next_tag/model.pt' if name == 'next_tag' else 'skin_tagger.pt')
         if not source.is_file():

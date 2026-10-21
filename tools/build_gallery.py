@@ -10,12 +10,7 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-MODELS = {
-    'generator_large': 'Generator Large · NameMC',
-    'generator_large_new_dataset': 'Generator Large · fine-tuned',
-    'generator': 'Original small generator',
-    'unknown': 'Unknown model',
-}
+MODELS = {'generator_large_new_dataset': 'Generator Large · latest'}
 
 
 def build(source, output):
@@ -31,6 +26,8 @@ def build(source, output):
                 parts = str(data.get('checkpoint', '')).replace('\\', '/').split('/')
                 candidate = parts[-2] if len(parts) >= 2 else None
                 model = candidate if candidate in MODELS else 'unknown'
+            if model != 'generator_large_new_dataset':
+                continue
             with Image.open(path) as image:
                 if image.format != 'PNG' or image.size != (64, 64):
                     raise ValueError('Not a 64x64 PNG')

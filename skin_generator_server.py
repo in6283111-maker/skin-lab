@@ -52,9 +52,7 @@ class GeneratorApp:
         self.models = {'default': {'name': 'Модель запуска', 'checkpoint': checkpoint, 'manifest': manifest,
                                    'tags': self.tags, 'allowed': self.allowed}}
         self.default_model = 'default'
-        for model_id, name in [('generator_large', 'Generator Large · NameMC'),
-                               ('generator_large_new_dataset', 'Generator Large · новый датасет'),
-                               ('generator', 'Первый генератор · маленькая модель')]:
+        for model_id, name in [('generator_large_new_dataset', 'Generator Large · latest')]:
             directory = ROOT / 'checkpoints' / model_id
             if (directory / 'dataset.json').is_file():
                 self.models[model_id] = {'name': name, 'checkpoint': directory / 'last.pt',
@@ -336,8 +334,8 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     parser = argparse.ArgumentParser(description='Local tag-to-skin generator website')
     parser.add_argument('--port', type=int, default=8001)
-    parser.add_argument('--checkpoint', type=Path, default=ROOT / 'checkpoints/generator_large/last.pt')
-    parser.add_argument('--manifest', type=Path, default=ROOT / 'checkpoints/generator_large/dataset.json')
+    parser.add_argument('--checkpoint', type=Path, default=ROOT / 'checkpoints/generator_large_new_dataset/last.pt')
+    parser.add_argument('--manifest', type=Path, default=ROOT / 'checkpoints/generator_large_new_dataset/dataset.json')
     parser.add_argument('--output', type=Path, default=ROOT / 'generated_skins_web')
     parser.add_argument('--device', choices=['auto', 'cuda', 'cpu'], default='auto')
     parser.add_argument('--next-tag-model', type=Path, default=DEFAULT_MODEL)

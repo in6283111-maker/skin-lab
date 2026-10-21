@@ -16,7 +16,7 @@ You can also help by reporting bugs, suggesting improvements or contributing cod
 
 - [Report a bug or suggest a feature](https://github.com/in6283111-maker/skin-lab/issues)
 - [Read the installation guide](README.md#english)
-- [Download the models](https://huggingface.co/Helledery/skin-lab-models)
+- [Download the models](https://huggingface.co/ender-venom1/skin-lab-models)
 
 Thank you for supporting the project.
 
@@ -36,6 +36,6 @@ Thank you for supporting the project.
 
 - [Сообщить об ошибке или предложить функцию](https://github.com/in6283111-maker/skin-lab/issues)
 - [Прочитать инструкцию по установке](README.md#russian)
-- [Скачать модели](https://huggingface.co/Helledery/skin-lab-models)
+- [Скачать модели](https://huggingface.co/ender-venom1/skin-lab-models)
 
 Спасибо за поддержку проекта.

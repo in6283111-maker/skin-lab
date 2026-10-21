@@ -11,6 +11,34 @@ from launch import choose_backend
 
 
 class DistributionTests(unittest.TestCase):
+    def test_cli_defaults_to_current_generator(self):
+        from skin_generator import parser
+        checkpoint = parser().parse_args(['generate', '--tags', 'girl']).checkpoint
+        self.assertEqual(checkpoint.parent.name, 'generator_large_new_dataset')
+        run = parser().parse_args(['tags']).run
+        self.assertEqual(run.name, 'generator_large_new_dataset')
+
+    def test_gallery_only_exports_current_generator_without_local_paths(self):
+        from PIL import Image
+        from tools.build_gallery import build
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source, output = root / 'source', root / 'docs'
+            source.mkdir()
+            for model in ('generator', 'generator_large', 'generator_large_new_dataset'):
+                Image.new('RGBA', (64, 64)).save(source / f'{model}.png')
+                (source / f'{model}.json').write_text(json.dumps({
+                    'checkpoint': f'C:/private/checkpoints/{model}/last.pt',
+                    'seed': 9223372036854775807, 'tags': ['Girl'], 'model': 'slim'}))
+            build(source, output)
+            text = (output / 'data.json').read_text(encoding='utf-8')
+            rows = json.loads(text)['skins']
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]['generator'], 'generator_large_new_dataset')
+            self.assertEqual(rows[0]['seed'], '9223372036854775807')
+            self.assertNotIn('private', text)
+            self.assertNotIn('checkpoint', text)
+
     def test_download_checksums_and_protects_changed_local_models(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -19,9 +47,9 @@ class DistributionTests(unittest.TestCase):
             destination.mkdir()
             data = cache / 'weights.pt'
             data.write_bytes(b'public weights')
-            filename = 'checkpoints/generator_large/last.pt'
+            filename = 'checkpoints/generator_large_new_dataset/last.pt'
             index = cache / 'models.json'
-            index.write_text(json.dumps({'models': {'generator_large': {'files': [
+            index.write_text(json.dumps({'models': {'generator_large_new_dataset': {'files': [
                 {'path': filename, 'sha256': hashlib.sha256(data.read_bytes()).hexdigest(), 'size': data.stat().st_size}]}}}))
             def fetch(repo, name, revision):
                 self.assertEqual(revision, 'fixed-commit')

@@ -71,7 +71,7 @@ def main():
             command += ['--repo', args.repo]
         run(command)
     run([python, '-c', 'import torch, torchvision; from pathlib import Path; '
-         'required=["generator_large/last.pt","generator_large/dataset.json","next_tag/model.pt","skin_tagger.pt"]; '
+         'required=["generator_large_new_dataset/last.pt","generator_large_new_dataset/dataset.json","next_tag/model.pt","skin_tagger.pt"]; '
          'missing=[name for name in required if not (Path("checkpoints")/name).is_file()]; '
          'assert not missing, "Missing models: " + str(missing); '
          'print("Ready. CUDA available:",torch.cuda.is_available())'])

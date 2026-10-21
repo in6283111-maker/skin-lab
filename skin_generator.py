@@ -23,7 +23,7 @@ from torch.utils.data import DataLoader, Dataset
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_DATA = ROOT / "namemc-skins-dataset-main"
-DEFAULT_RUN = ROOT / "checkpoints" / "generator"
+DEFAULT_RUN = ROOT / "checkpoints" / "generator_large_new_dataset"
 LARGE_RUN = ROOT / "checkpoints" / "generator_large"
 ARCHITECTURE = "tag_ddpm_rgba_v1"
 
@@ -626,7 +626,7 @@ def generate(args):
     torch.set_num_threads(args.cpu_threads)
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=True)
     if checkpoint.get("architecture") not in (ARCHITECTURE, 'tag_ddpm_rgba_v2_attention'):
-        raise ValueError("Select a generator checkpoint, e.g. checkpoints/generator/last.pt")
+        raise ValueError("Select a generator checkpoint, e.g. checkpoints/generator_large_new_dataset/last.pt")
     labels, config = checkpoint["labels"], checkpoint["config"]
     indices = {tag: index + 1 for index, tag in enumerate(labels)}
     names = parse_tags(args.tags)
@@ -699,7 +699,7 @@ def parser():
     generation_options = argparse.ArgumentParser(add_help=False)
     generate_parser = generation_options
     generate_parser.add_argument("--tags", required=True, help='Comma-separated or JSON: Girl,Pink,Cute')
-    generate_parser.add_argument("--checkpoint", type=Path, default=(LARGE_RUN / 'last.pt') if (LARGE_RUN / 'last.pt').is_file() else DEFAULT_RUN / "last.pt")
+    generate_parser.add_argument("--checkpoint", type=Path, default=DEFAULT_RUN / "last.pt")
     generate_parser.add_argument("--count", type=positive_int, default=4)
     generate_parser.add_argument("--sampling-steps", type=positive_int, default=50)
     generate_parser.add_argument("--guidance", type=float, default=2.5)
