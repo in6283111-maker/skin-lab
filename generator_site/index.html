@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Генератор скинов</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"></head>
+<body>
+<main class="workspace">
+  <section class="panel" aria-label="Настройки генерации">
+    <form id="generate-form">
+      <label for="generator-model">Модель</label>
+      <select id="generator-model" disabled aria-label="Модель генерации"></select>
+      <p id="model-hint" class="hint">Загрузка моделей…</p>
+      <section class="upload-section" aria-label="Загрузка скина">
+        <label class="upload-button" for="skin-upload"><span>↑ Загрузить скин</span><small>PNG 64 × 64</small></label>
+        <input id="skin-upload" class="upload-input" type="file" accept="image/png,.png">
+        <div id="uploaded-preview" hidden><img id="uploaded-image" alt="Загруженный скин"><span id="uploaded-name"></span></div>
+        <p id="upload-status" class="hint" role="status" aria-live="polite"></p>
+        <div id="recognized-tags" class="chips"></div>
+        <button id="use-recognized-tags" class="secondary" type="button" hidden>Добавить распознанные теги</button>
+      </section>
+      <div class="divider"></div>
+      <label for="tag-input">Теги</label>
+      <p class="hint">Поиск от 3 символов · Enter для добавления</p>
+      <div id="selected-tags" class="chips selected"></div>
+      <div class="input-wrap"><input id="tag-input" placeholder="girl, pink, hoodie" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestions"><div id="suggestions" role="listbox" hidden></div></div>
+      <div class="popular-heading"><span id="suggestion-heading">Популярные теги</span><button type="button" id="pick-tags" class="text-button">↻ Подобрать</button></div>
+      <div id="popular-tags" class="chips popular"></div>
+      <p id="recommendation-status" class="hint" role="status" aria-live="polite"></p>
+      <details class="advanced"><summary>Параметры генерации</summary><div class="step-control"><label for="steps">Шаги</label><input id="steps" type="number" min="1" max="1000" value="100" required></div></details>
+      <button id="generate-button" class="primary" type="submit">Сгенерировать <span>4 скина →</span></button>
+      <p id="status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+  <section class="results" aria-label="Результаты генерации">
+    <div class="results-heading"><h1>Результаты</h1><button id="history-button" class="text-button" type="button">↺ Последние</button></div>
+    <div id="skin-grid" class="skin-grid"></div>
+    <p class="render-hint">Тяни мышью для вращения · колесо для масштаба</p>
+  </section>
+</main>
+<script src="vendor/skinview3d.bundle.min.js"></script><script src="app.js" defer></script>
+</body></html>
