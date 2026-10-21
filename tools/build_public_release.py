@@ -7,7 +7,7 @@ DESTINATION = ROOT / 'release/skin-lab'
 FILES = ['skin_generator.py', 'skin_generator_large.py', 'skin_generator_server.py', 'skin_tagger.py',
          'next_tag.py', 'main.py', 'catalog_server.py', 'tag_skins_folder.py', 'validate_skins_folder.py',
          'build_skins_sqlite.py', 'tags_top.py', 'start_generator_training.ps1', 'launch.py', 'start.ps1', 'start.sh',
-         'download_models.py', 'model_hub.json', 'requirements.txt', '.gitignore', 'LICENSE',
+         'download_models.py', 'model_hub.json', 'requirements.txt', '.gitignore', 'LICENSE', 'SUPPORT.md',
          'test_skin_generator.py', 'test_skin_generator_large.py', 'test_skin_generator_server.py',
          'test_skin_edit.py', 'test_next_tag.py', 'test_distribution.py']
 
